@@ -14,11 +14,12 @@ def get_response(messages: list) -> str:
     client = OpenAI(
     api_key= current_app.config['OPENAI_API_KEY'],
     )
-    completion = client.ChatCompletion.create(
+    completion = client.chat.completions.create(
         model='gpt-4o-mini',
         messages=messages,
-    )
+    ) 
     return completion.choices[0].message.content
+
 
 
 def classify_transactions(transactions: str) -> str:

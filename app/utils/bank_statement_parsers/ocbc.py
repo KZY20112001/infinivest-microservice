@@ -1,14 +1,16 @@
 import re
 
 from werkzeug.datastructures import FileStorage
-import pymupdf, fitz
+import pymupdf
 
 def is_indented(line:str) -> bool:
     return len(line) - len(line.lstrip()) >= 8
 
 def parse_OCBC_bank_statement(bank_statement: FileStorage) -> list: 
     transactions = []
-    with fitz.open(bank_statement, filetype="pdf") as doc:
+    bank_statement_bytes = bank_statement.read()
+    
+    with pymupdf.open(stream=bank_statement_bytes, filetype='pdf') as doc:
         for pageNo in range(len(doc)):
             current_transaction: dict = {}
                 

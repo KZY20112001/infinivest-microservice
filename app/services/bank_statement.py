@@ -9,6 +9,7 @@ def classify_profile(bank_statement: FileStorage, bank_name: str)->str:
     Takes in a bank statement (pdf) and the corresponding bank name. 
     Returns a recommended portfolio style based on the bank statement. 
     """
+    
     transactions: list = []
     match bank_name: 
         case "OCBC": 
