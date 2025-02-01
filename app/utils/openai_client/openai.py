@@ -1,6 +1,8 @@
 from flask import current_app
+import json
 from openai import OpenAI
 
+from app.models.portfolio import Portfolio, PortfolioResponse
 
 
 def format_message(role: str, content: str) -> dict:
@@ -50,40 +52,54 @@ def classify_transactions(transactions: str) -> str:
     return get_response(messages)
 
 
-def classify_portfolio(expenditure_dict: dict) -> str:
-    """Suggests a stock portfolio based on expenditure categories using OpenAI."""
-    class_inst = """
+def generate_portfolio_split(expenditure_dict: dict, risk_tolerance_level:str) -> PortfolioResponse:
+    class_inst = f"""
     You will be given the dictionary containing expenses spent in one month grouped into 4 categories: essentials, discretionary, debt, savings.
-    Use that information to suggest the user's stock portfolio from these 19 categories:
-    1. 7Twelve Portfolio
-    2. All Seasons Portfolio
-    3. Classic 60-40 Portfolio
-    4. Coffeehouse Portfolio
-    5. Core Four Portfolio
-    6. Global Market Portfolio
-    7. Golden Butterfly Portfolio
-    8. Ideal Index Portfolio
-    9. Ivy Portfolio
-    10. Larry Portfolio
-    11. No-Brainer Portfolio
-    12. Permanent Portfolio
-    13. Pinwheel Portfolio
-    14. Sandwich Portfolio
-    15. Swensen Portfolio
-    16. Three-Fund Portfolio
-    17. Total Stock Market Portfolio
-    18. Ultimate Buy and Hold Portfolio
-    19. Weird Portfolio
+    You will also be given the user's risk tolerance level: low, medium, high.
+    Use these information to suggest the percentage split in these categories (the recommended percentage may be zero):
+    1. Large Cap Blend
+    2. Small Cap Blend
+    3. International Stocks
+    4. Emerging Markets
+    5. Intermediate Bonds
+    6. International Bonds
+    7. Cash
+    8. Commodities
+    9. REITs
 
-    Input line will be a dictionary containing the categories and the respective expenditure percentages:
-    e.g., {'essentials': 40, 'discretionary': 25, 'debt': 5, 'savings': 30}
+    Input line will be a dictionary containing the categories and the respective expenditure percentages followed by the risk tolerance level (low,medium or high):
+    e.g. {{essentials': 40 , 'discretionary': 25, 'debt': 5, 'savings': 30}} low
 
-    Respond only with one line containing the category:
-    e.g., All Seasons Portfolio
-    """
 
-    messages = [
-        format_message("system", class_inst),
-        format_message("user", str(expenditure_dict))
-    ]
-    return get_response(messages)
+    Respond with first part containing the recommended splits for the above categories. 
+    And another part giving a short explanation (one paragraph) for why such split is recommended. 
+    Return in JSON format as shown in this example:
+    e.g.
+    {{ 
+        "portfolio" : {{
+              "large_cap_blend": 20,
+              "small_cap_blend": 5,
+              "international_stocks": 10,
+              "emerging_markets": 2,
+              "intermediate_bonds": 30,
+              "international_bonds": 10,
+              "cash": 15,
+              "commodities": 3,
+              "reits": 5
+        }}, 
+        "reason" : "This allocation prioritizes stability, income, and capital preservation while allowing for moderate growth"
+    }}
+    """ 
+
+    input_message = str(expenditure_dict) + " " + risk_tolerance_level
+    messages = [format_message("system", class_inst),
+                    format_message("user", input_message)]
+    res = get_response(messages)
+    res_dict = json.loads(res)
+    print(res_dict)
+    portfolio_data = PortfolioResponse(
+        portfolio=Portfolio(**res_dict["portfolio"]),
+        reason=res_dict["reason"]
+    )
+    return portfolio_data
+

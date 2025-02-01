@@ -1,6 +1,6 @@
-from .openai import classify_portfolio, classify_transactions
+from .openai import generate_portfolio_split, classify_transactions
 
 
 __all__ = [
-    classify_portfolio, classify_transactions
+    generate_portfolio_split, classify_transactions
 ]
