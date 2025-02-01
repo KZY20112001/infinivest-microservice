@@ -5,4 +5,4 @@ class PathConstants(Enum):
     
     
 class AppConstants(Enum):
-    ALLOWED_BANKS = ['OCBC', 'SC']
+    ALLOWED_BANKS = ['ocbc', 'sc']

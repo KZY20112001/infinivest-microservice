@@ -1,10 +1,11 @@
 from werkzeug.datastructures import FileStorage
 import pandas as pd
 
+from app.models.portfolio import PortfolioResponse
 from app.utils.bank_statement_parsers import parse_OCBC_bank_statement, parse_SC_bank_statement
-from app.utils.openai_client import classify_transactions, classify_portfolio 
+from app.utils.openai_client import classify_transactions, generate_portfolio_split 
 
-def classify_profile(bank_statement: FileStorage, bank_name: str)->str:
+def generate_portfolio(bank_statement: FileStorage, bank_name: str, risk_tolerance_level:str="medium") -> PortfolioResponse:
     """
     Takes in a bank statement (pdf) and the corresponding bank name. 
     Returns a recommended portfolio style based on the bank statement. 
@@ -12,9 +13,9 @@ def classify_profile(bank_statement: FileStorage, bank_name: str)->str:
     
     transactions: list = []
     match bank_name: 
-        case "OCBC": 
+        case "ocbc": 
             transactions = parse_OCBC_bank_statement(bank_statement)
-        case "SC": 
+        case "sc": 
             transactions = parse_SC_bank_statement(bank_statement)
             
     # create a dataframe from the transactions
@@ -25,7 +26,7 @@ def classify_profile(bank_statement: FileStorage, bank_name: str)->str:
     
     expenses_dict = calc_expenses(df)
     
-    return classify_portfolio(expenses_dict)
+    return generate_portfolio_split(expenses_dict, risk_tolerance_level)
     
 
 def create_dataframe(transactions: list) -> pd.DataFrame: 
