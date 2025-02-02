@@ -96,7 +96,6 @@ def generate_portfolio_split(expenditure_dict: dict, risk_tolerance_level:str) -
                     format_message("user", input_message)]
     res = get_response(messages)
     res_dict = json.loads(res)
-    print(res_dict)
     portfolio_data = PortfolioResponse(
         portfolio=Portfolio(**res_dict["portfolio"]),
         reason=res_dict["reason"]

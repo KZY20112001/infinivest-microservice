@@ -52,7 +52,7 @@ def add_category(df: pd.DataFrame) -> pd.DataFrame:
         cur = str(i) + " " + descriptions.iloc[i]
         current += cur
         count += 1
-        if count == 50 or i == len(df) - 1:
+        if count == 100 or i == len(df) - 1:
             categories = classify_transactions(current).split('\n')
             for category in categories: 
                 array = category.strip().split(' ')
