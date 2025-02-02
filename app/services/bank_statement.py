@@ -46,25 +46,23 @@ def add_category(df: pd.DataFrame) -> pd.DataFrame:
     max_index = len(df)
     descriptions = df['description']
     category_dict = {}
-    current = ""
-    count = 0
-    for i in range(len(descriptions)):
-        cur = str(i) + " " + descriptions.iloc[i]
-        current += cur
-        count += 1
-        if count == 100 or i == len(df) - 1:
-            categories = classify_transactions(current).split('\n')
+    batch = []
+    
+    for i, desc in enumerate(descriptions):
+        batch.append(f"{i} {desc}") 
+        if len(batch) == 200 or i == len(df) - 1:  
+            categories = classify_transactions("\n".join(batch)).split('\n')  
             for category in categories: 
                 array = category.strip().split(' ')
-                if len(array) != 2 or not array[0].isnumeric() or int(array[0]) < 0 or int(array[0]) >= max_index: 
-                    continue
-                category_dict[array[0]] = array[1] 
-            current = ""
-            count = 0
-        else:
-            current += "\n"
+                if len(array) == 2 and array[0].isdigit(): 
+                    idx = int(array[0])
+                    if 0 <= idx < max_index:
+                        category_dict[array[0]] = array[1]
+            batch = [] 
+
     df['category'] = df.index.map(lambda x: category_dict.get(str(x), 'miscellaneous'))
     return df
+
 
 
 def calc_expenses(df: pd.DataFrame) -> dict: 
