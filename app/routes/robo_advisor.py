@@ -4,9 +4,9 @@ from app.services.bank_statement import generate_portfolio
 from app.constants import AppConstants 
 
 
-bank_statement_bp = Blueprint('bank_statement', __name__)
+robo_advisor_bp = Blueprint('robo-advisor', __name__)
 
-@bank_statement_bp.route('/<bank_name>/generate', methods=['POST'])
+@robo_advisor_bp.route('/<bank_name>/generate', methods=['POST'])
 def generate_user_portfolio(bank_name:str = None):
     """
     Endpoint to upload, process a bank statement PDF for a specific bank and then returns a specific portfolio style for the user.
@@ -32,6 +32,6 @@ def generate_user_portfolio(bank_name:str = None):
 
 
 
-@bank_statement_bp.route('/', methods=['GET'])
+@robo_advisor_bp.route('/', methods=['GET'])
 def hello(): 
     return "HELLO"
