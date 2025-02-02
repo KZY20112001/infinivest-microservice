@@ -31,7 +31,7 @@ def classify_transactions(transactions: str) -> str:
     Categorize the bank transactions into 5 categories: essentials, discretionary, debt, savings, and miscellaneous. 
     These keywords below will be helpful to you. 
 
-    essentials_keywords = ['grocery', 'utility', 'rent', 'transport', 'electricity', 'ds', 'drink stall', 'water', 'canteen', 'delights', 'noodle', 'food']
+    essentials_keywords = ['grocery', 'utility', 'breakfast', 'lunch','dinner', 'rent', 'transport', 'electricity', 'ds', 'drink stall', 'water', 'canteen', 'delights', 'noodle', 'food']
     discretionary_keywords = ['edu', 'coursera', 'shopee', 'restaurant', 'shopping', 'entertainment', 'cinema', 'travel', 'tech'] 
     debt_keywords = ['loan', 'credit card', 'repayment', 'mortgage']
     savings_keywords = ['investment', 'savings', 'stock', 'deposit', 'fund']
@@ -72,7 +72,7 @@ def generate_portfolio_split(expenditure_dict: dict, risk_tolerance_level:str) -
 
 
     Respond with first part containing the recommended splits for the above categories. 
-    And another part giving a short explanation (one paragraph) for why such split is recommended. 
+    And another part giving a short explanation (one paragraph) for why such split is recommended based on the given expenditure and risk tolerance. 
     Return in JSON format as shown in this example:
     e.g.
     {{ 
@@ -90,7 +90,7 @@ def generate_portfolio_split(expenditure_dict: dict, risk_tolerance_level:str) -
         "reason" : "This allocation prioritizes stability, income, and capital preservation while allowing for moderate growth"
     }}
     """ 
-
+    print(expenditure_dict)
     input_message = str(expenditure_dict) + " " + risk_tolerance_level
     messages = [format_message("system", class_inst),
                     format_message("user", input_message)]
