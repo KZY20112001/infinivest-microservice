@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify
 
 from app.services.bank_statement import generate_portfolio
 from app.constants import AppConstants 
