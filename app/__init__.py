@@ -1,6 +1,6 @@
 from flask import Flask
 
-from .routes.robo_advisor import robo_advisor_bp
+from .routes import robo_advisor_bp
 from .config import Config
 
 

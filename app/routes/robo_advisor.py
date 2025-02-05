@@ -1,13 +1,13 @@
 from flask import Blueprint, request, jsonify
 
-from app.services.bank_statement import generate_portfolio
+from app.services import generate_portfolio, generate_asset_allocation
 from app.constants import AppConstants 
 
 
 robo_advisor_bp = Blueprint('robo-advisor', __name__)
 
-@robo_advisor_bp.route('/<bank_name>/generate', methods=['POST'])
-def generate_user_portfolio(bank_name:str = None):
+@robo_advisor_bp.route('/generate/<bank_name>', methods=['POST'])
+def generate_portfolio_handler(bank_name:str = None):
     """
     Endpoint to upload, process a bank statement PDF for a specific bank and then returns a specific portfolio style for the user.
     Expects a pdf file in the form-data named 'file'.
@@ -30,6 +30,25 @@ def generate_user_portfolio(bank_name:str = None):
     except Exception as e:
         return jsonify({'error': 'An error occurred while processing the PDF: ' + str(e)}), 500
 
+@robo_advisor_bp.route('/generate/<category>/<percentage>', methods=['GET'])
+def generate_asset_allocation_handler(category:str, percentage:str):
+    """
+    Endpoint to generate the asset split for a given category and total percentage
+    """
+    if category not in AppConstants.ALLOWED_PORTFOLIO_CATEGORIES.value:
+        return jsonify({'error': 'This category is not allowed'}), 400
+
+    if not percentage.isnumeric() or float(percentage) < 0 or float(percentage) > 100:
+        return jsonify({'error': 'Invalid percentage. Please provide a valid numeric percentage'}), 400
+    try:
+        result = generate_asset_allocation(category, percentage)  
+        return jsonify(result.model_dump()), 200
+    except ValueError as ve:
+        return jsonify({'error': str(ve)}), 406
+    except RuntimeError as re:
+        return jsonify({'error': str(re)}), 500
+    except Exception as e:
+        return jsonify({'error': 'An error occurred while generating asset allocation: ' + str(e)}), 500
 
 
 @robo_advisor_bp.route('/', methods=['GET'])
