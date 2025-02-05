@@ -40,7 +40,7 @@ def generate_asset_allocation(category:str, percentage:str) -> AssetAllocationRe
     invalid_stocks = get_invalid_stocks(assets)
     while invalid_stocks and retry_count < MAX_RETRIES:
         print(f"Invalid symbols found: {invalid_stocks}. Fetching new recommendations...")
-        assets = generate_asset_allocation(category, percentage, invalid_stocks)  
+        assets = generate_asset_allocation_split(category, percentage, invalid_stocks)  
         invalid_stocks = get_invalid_stocks(assets)
     if invalid_stocks:
         raise RuntimeError(f"Max retries reached. Some symbols could not be replaced: {invalid_stocks}")
