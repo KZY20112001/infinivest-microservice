@@ -103,7 +103,8 @@ def generate_asset_allocation_split(category: str, total_percentage: str, invali
 
     {exclusion_clause}
 
-    Return the recommended assets and their percentages in the JSON format as shown in this example:
+    Return the recommended assets (their symbols) and their percentages in the JSON format as shown in this example:
+    Ensure that the symbols are valid symbols.
     e.g.
     {{ 
         "SPY": 12,
