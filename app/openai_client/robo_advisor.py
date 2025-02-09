@@ -1,28 +1,7 @@
-from flask import current_app
 import json
-from openai import OpenAI
 
-from app.models.portfolio import Portfolio, PortfolioResponse
-
-
-def format_message(role: str, content: str) -> dict:
-    """Formats a message for OpenAI API request."""
-    return {"role": role, "content": content}
-
-
-def get_response(messages: list) -> str:
-    """Calls OpenAI API to get a response based on the provided messages."""
-    
-    client = OpenAI(
-    api_key= current_app.config['OPENAI_API_KEY'],
-    )
-    completion = client.chat.completions.create(
-        model='gpt-4o-mini',
-        messages=messages,
-    ) 
-    return completion.choices[0].message.content
-
-
+from app.models import Portfolio, PortfolioResponse, Asset, AssetAllocationResponse
+from .openai import format_message, get_response
 
 def classify_transactions(transactions: str) -> str:
     """Classifies bank transactions into categories using OpenAI."""
@@ -31,7 +10,7 @@ def classify_transactions(transactions: str) -> str:
     Categorize the bank transactions into 5 categories: essentials, discretionary, debt, savings, and miscellaneous. 
     These keywords below will be helpful to you. 
 
-    essentials_keywords = ['grocery', 'utility', 'rent', 'transport', 'electricity', 'ds', 'drink stall', 'water', 'canteen', 'delights', 'noodle', 'food']
+    essentials_keywords = ['grocery', 'utility', 'breakfast', 'lunch','dinner', 'rent', 'transport', 'electricity', 'ds', 'drink stall', 'water', 'canteen', 'delights', 'noodle', 'food']
     discretionary_keywords = ['edu', 'coursera', 'shopee', 'restaurant', 'shopping', 'entertainment', 'cinema', 'travel', 'tech'] 
     debt_keywords = ['loan', 'credit card', 'repayment', 'mortgage']
     savings_keywords = ['investment', 'savings', 'stock', 'deposit', 'fund']
@@ -73,6 +52,7 @@ def generate_portfolio_split(expenditure_dict: dict, risk_tolerance_level:str) -
 
     Respond with first part containing the recommended splits for the above categories. 
     And another part giving a short explanation (one paragraph) for why such split is recommended. 
+    Note that for non-zero categories, minimum percentage is 5%. 
     Return in JSON format as shown in this example:
     e.g.
     {{ 
@@ -90,15 +70,55 @@ def generate_portfolio_split(expenditure_dict: dict, risk_tolerance_level:str) -
         "reason" : "This allocation prioritizes stability, income, and capital preservation while allowing for moderate growth"
     }}
     """ 
-
     input_message = str(expenditure_dict) + " " + risk_tolerance_level
     messages = [format_message("system", class_inst),
                     format_message("user", input_message)]
     res = get_response(messages)
-    res_dict = json.loads(res)
+    res_dict:dict = json.loads(res)
     portfolio_data = PortfolioResponse(
         portfolio=Portfolio(**res_dict["portfolio"]),
         reason=res_dict["reason"]
     )
     return portfolio_data
 
+
+
+def generate_asset_allocation_split(category: str, total_percentage: str, invalid_list: list) -> AssetAllocationResponse: 
+    excluded_symbols = ", ".join(invalid_list)
+    exclusion_clause = f"You must not include the following assets in your answer: {excluded_symbols}." if excluded_symbols else ""
+    class_inst = f"""
+    You will be given a portfolio category from the following list and the total percentage to be allocated.
+    Use that information to suggest a list of assets and the corresponding amount to be allocated to that asset.
+    1. large_cap_blend
+    2. small_cap_blend
+    3. international_stocks
+    4. emerging_markets
+    5. intermeidate_bonds
+    6. international_bonds
+    7. commodities
+    8. reits
+
+    Input will be a line containing the category (from the list above) followed by the total percentage.
+    e.g. large_cap_blend 25
+
+    {exclusion_clause}
+
+    Return the recommended assets (their symbols) and their percentages in the JSON format as shown in this example:
+    Ensure that the symbols are valid symbols.
+    e.g.
+    {{ 
+        "SPY": 12,
+        "VTI": 7,
+        "GOOG": 3,
+        "AAPL": 2.5,
+        "MSFT": 0.5
+    }}
+    """
+    input_message = category + " " + total_percentage
+    messages = [format_message("system", class_inst),
+                    format_message("user", input_message)]
+    res = get_response(messages)
+
+    assets_list = [Asset(symbol=k, percentage=v) for k, v in json.loads(res).items()]
+    asset_allocation = AssetAllocationResponse(assets=assets_list)
+    return asset_allocation

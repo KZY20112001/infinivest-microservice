@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List
 
 class Portfolio(BaseModel):
     large_cap_blend: float
@@ -14,3 +15,10 @@ class Portfolio(BaseModel):
 class PortfolioResponse(BaseModel):
     portfolio: Portfolio
     reason: str
+
+class Asset(BaseModel):
+    symbol: str
+    percentage: float
+
+class AssetAllocationResponse(BaseModel):
+    assets: List[Asset]

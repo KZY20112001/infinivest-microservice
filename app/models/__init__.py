@@ -1,3 +1,3 @@
-from .portfolio import Portfolio, PortfolioResponse
+from .portfolio import Portfolio, PortfolioResponse, Asset, AssetAllocationResponse
 
-__all__ = [ "Portfolio", "PortfolioResponse" ]
+__all__ = [ "Portfolio", "PortfolioResponse", "Asset", "AssetAllocationResponse"]

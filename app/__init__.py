@@ -1,6 +1,6 @@
 from flask import Flask
 
-from .routes.bank_statement import bank_statement_bp
+from .routes import robo_advisor_bp
 from .config import Config
 
 
@@ -8,7 +8,7 @@ from .config import Config
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
-    app.register_blueprint(bank_statement_bp, url_prefix='/bank_statement')
+    app.register_blueprint(robo_advisor_bp, url_prefix='/robo-advisor')
     return app
 
 
