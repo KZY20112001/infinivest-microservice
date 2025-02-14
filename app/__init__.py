@@ -1,16 +1,21 @@
 from flask import Flask
-
-from .routes import robo_advisor_bp
+from .routes import robo_advisor_bp, assets_bp
 from .config import Config
 
 
-
+blueprints = [
+    (robo_advisor_bp, '/robo-advisor'),
+    (assets_bp, '/assets')
+]
+    
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
-    app.register_blueprint(robo_advisor_bp, url_prefix='/robo-advisor')
+    
+    for bp, prefix in blueprints:
+        app.register_blueprint(bp, url_prefix=prefix)
+    
     return app
-
 
 if __name__ == '__main__':
     app = create_app()

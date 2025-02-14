@@ -15,7 +15,7 @@ def generate_portfolio_handler(bank_name:str = None):
     file = request.files.get('bank_statement')  
     bank_name = request.form.get('bank_name')
     risk_tolerance_level = request.form.get('risk_tolerance_level')
-    print("bank name: ", bank_name)
+    
     if bank_name not in AppConstants.ALLOWED_BANKS.value:
         return jsonify({'error': 'This bank is not allowed'}), 400
     if not file:
@@ -56,7 +56,3 @@ def generate_asset_allocation_handler():
     except Exception as e:
         return jsonify({'error': 'An error occurred while generating asset allocation: ' + str(e)}), 500
 
-
-@robo_advisor_bp.route('/', methods=['GET'])
-def hello(): 
-    return "HELLO"
