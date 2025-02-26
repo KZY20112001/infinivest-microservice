@@ -34,6 +34,7 @@ def generate_asset_allocation(category:str, percentage:str) -> AssetAllocationRe
     """
     Takes in a category and a percentage and returns the asset split for the category. 
     """
+    print("Generating asset allocation for category: ", category)
     MAX_RETRIES = 10
     assets = generate_asset_allocation_split(category, percentage, [])
     retry_count = 0
@@ -44,6 +45,7 @@ def generate_asset_allocation(category:str, percentage:str) -> AssetAllocationRe
         invalid_stocks = get_invalid_stocks(assets)
     if invalid_stocks:
         raise RuntimeError(f"Max retries reached. Some symbols could not be replaced: {invalid_stocks}")
+    print("Asset allocation generated successfully for category: ", category)
     return assets; 
 
 

@@ -52,7 +52,7 @@ def generate_portfolio_split(expenditure_dict: dict, risk_tolerance_level:str) -
 
     Respond with first part containing the recommended splits for the above categories. 
     And another part giving a short explanation (one paragraph) for why such split is recommended. 
-    Note that for non-zero categories, minimum percentage is 5%. 
+    Ensure the total percentages for the categories sum up to 100 (important). 
     Return in JSON format as shown in this example:
     e.g.
     {{ 
@@ -104,14 +104,14 @@ def generate_asset_allocation_split(category: str, total_percentage: str, invali
     {exclusion_clause}
 
     Return the recommended assets (their symbols) and their percentages in the JSON format as shown in this example:
-    Ensure that the symbols are valid symbols.
+    Ensure that the symbols are valid symbols, and the total percentages for the generated assets sum up to the total percentage provided.
     e.g.
     {{ 
         "SPY": 12,
-        "VTI": 7,
+        "VTI": 6,
         "GOOG": 3,
-        "AAPL": 2.5,
-        "MSFT": 0.5
+        "AAPL": 2,
+        "MSFT": 2
     }}
     """
     input_message = category + " " + total_percentage
