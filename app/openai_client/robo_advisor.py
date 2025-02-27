@@ -43,8 +43,7 @@ def generate_portfolio_split(expenditure_dict: dict, risk_tolerance_level:str) -
     5. Intermediate Bonds
     6. International Bonds
     7. Cash
-    8. Commodities
-    9. REITs
+
 
     Input line will be a dictionary containing the categories and the respective expenditure percentages followed by the risk tolerance level (low,medium or high):
     e.g. {{essentials': 40 , 'discretionary': 25, 'debt': 5, 'savings': 30}} low
@@ -52,7 +51,7 @@ def generate_portfolio_split(expenditure_dict: dict, risk_tolerance_level:str) -
 
     Respond with first part containing the recommended splits for the above categories. 
     And another part giving a short explanation (one paragraph) for why such split is recommended. 
-    Ensure the total percentages for the categories sum up to 100 (important). 
+    Ensure the total percentages for the categories sum up to 100. 
     Return in JSON format as shown in this example:
     e.g.
     {{ 
@@ -60,15 +59,14 @@ def generate_portfolio_split(expenditure_dict: dict, risk_tolerance_level:str) -
               "large_cap_blend": 20,
               "small_cap_blend": 5,
               "international_stocks": 10,
-              "emerging_markets": 2,
+              "emerging_markets": 5,
               "intermediate_bonds": 30,
               "international_bonds": 10,
-              "cash": 15,
-              "commodities": 3,
-              "reits": 5
+              "cash": 20,
         }}, 
         "reason" : "This allocation prioritizes stability, income, and capital preservation while allowing for moderate growth"
     }}
+    Note that the total percentages sum up to 20+5+10+2+30+10+15+3+5 = 100. 
     """ 
     input_message = str(expenditure_dict) + " " + risk_tolerance_level
     messages = [format_message("system", class_inst),
@@ -95,8 +93,7 @@ def generate_asset_allocation_split(category: str, total_percentage: str, invali
     4. emerging_markets
     5. intermeidate_bonds
     6. international_bonds
-    7. commodities
-    8. reits
+
 
     Input will be a line containing the category (from the list above) followed by the total percentage.
     e.g. large_cap_blend 25
