@@ -2,7 +2,7 @@ from werkzeug.datastructures import FileStorage
 import pandas as pd
 import yfinance as yf
 
-from app.models import PortfolioResponse, AssetAllocationResponse
+from app.models import PortfolioResponse, AssetAllocationResponse, Asset
 from app.openai_client import classify_transactions, generate_portfolio_split, generate_asset_allocation_split
 from app.utils.bank_statement_parsers import parse_OCBC_bank_statement, parse_SC_bank_statement
 
@@ -26,7 +26,6 @@ def generate_portfolio(bank_statement: FileStorage, bank_name: str, risk_toleran
     df = add_category(df)
     
     expenses_dict = calc_expenses(df)
-    
     return generate_portfolio_split(expenses_dict, risk_tolerance_level)
     
 
@@ -46,7 +45,7 @@ def generate_asset_allocation(category:str, percentage:str) -> AssetAllocationRe
     if invalid_stocks:
         raise RuntimeError(f"Max retries reached. Some symbols could not be replaced: {invalid_stocks}")
     print("Asset allocation generated successfully for category: ", category)
-    return assets; 
+    return add_names_to_assets(assets); 
 
 
 def create_dataframe(transactions: list) -> pd.DataFrame: 
@@ -107,6 +106,7 @@ def get_invalid_stocks(asset_allocations: AssetAllocationResponse) -> list:
     for asset in asset_allocations.assets:
         try: 
             stock = yf.Ticker(asset.symbol)
+
             latest_price = stock.history(period="1d")['Close'].iloc[-1] 
 
             if latest_price is None or latest_price != latest_price: 
@@ -118,3 +118,19 @@ def get_invalid_stocks(asset_allocations: AssetAllocationResponse) -> list:
             continue
 
     return invalid_stocks
+
+def add_names_to_assets(response: AssetAllocationResponse) -> AssetAllocationResponse:
+    updated_assets = []
+    
+    for asset in response.assets:
+        stock = yf.Ticker(asset.symbol)
+        name = stock.info.get("longName", None)  
+        
+        updated_asset = Asset(
+            name=name,
+            symbol=asset.symbol,
+            percentage=asset.percentage
+        )
+        updated_assets.append(updated_asset)
+
+    return AssetAllocationResponse(assets=updated_assets)

@@ -51,23 +51,24 @@ def generate_portfolio_split(expenditure_dict: dict, risk_tolerance_level:str) -
 
     Respond with first part containing the recommended splits for the above categories. 
     And another part giving a short explanation (one paragraph) for why such split is recommended. 
-    Ensure the total percentages for the categories sum up to 100. 
+    Ensure the total percentages across all categories sum up to 100. 
     Return in JSON format as shown in this example:
     e.g.
     {{ 
         "portfolio" : {{
-              "large_cap_blend": 20,
-              "small_cap_blend": 5,
-              "international_stocks": 10,
-              "emerging_markets": 5,
-              "intermediate_bonds": 30,
-              "international_bonds": 10,
+              "largeCapBlend": 20,
+              "smallCapBlend": 5,
+              "internationalStocks": 10,
+              "emergingMarkets": 5,
+              "intermediateBonds": 30,
+              "internationalBonds": 10,
               "cash": 20,
         }}, 
         "reason" : "This allocation prioritizes stability, income, and capital preservation while allowing for moderate growth"
     }}
     Note that the total percentages sum up to 20+5+10+2+30+10+15+3+5 = 100. 
     """ 
+
     input_message = str(expenditure_dict) + " " + risk_tolerance_level
     messages = [format_message("system", class_inst),
                     format_message("user", input_message)]
