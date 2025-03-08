@@ -35,7 +35,8 @@ def generate_portfolio_split(expenditure_dict: dict, risk_tolerance_level:str) -
     class_inst = f"""
     You will be given the dictionary containing expenses spent in one month grouped into 4 categories: essentials, discretionary, debt, savings.
     You will also be given the user's risk tolerance level: low, medium, high.
-    Use these information to suggest the percentage split in these categories (the recommended percentage may be zero):
+    Use these information to suggest the percentage split in these categories, and make sure to always allocate some percentage for cash 
+    (the recommended percentage for others may be zero):
     1. Large Cap Blend
     2. Small Cap Blend
     3. International Stocks
@@ -120,3 +121,22 @@ def generate_asset_allocation_split(category: str, total_percentage: str, invali
     assets_list = [Asset(symbol=k, percentage=v) for k, v in json.loads(res).items()]
     asset_allocation = AssetAllocationResponse(assets=assets_list)
     return asset_allocation
+
+
+def generate_asset_description(symbol: str)->str: 
+    class_inst = """
+    You will be given a stock or ETF symbol. 
+    Use that information to suggest a short description of the stock or ETF.
+    Input will be a line containing the symbol.
+    e.g. BND
+
+    Return the description of the stock or ETF as a raw string.
+    e.g. 
+    The Vanguard Total Bond Market Index Fund (BND) is a diversified bond ETF that seeks to track the performance of the U.S. investment-grade bond market. 
+    It includes a mix of government, corporate, and mortgage-backed securities, offering stability and income with moderate risk.
+    """
+    messages = [format_message("system", class_inst),
+                    format_message("user", symbol)]
+    return get_response(messages)
+
+    

@@ -1,7 +1,7 @@
 import logging
 import numpy as np
 import yfinance as yf
-
+from app.openai_client import generate_asset_description
 def get_latest_price(symbol: str) -> float:
     try:
         stock = yf.Ticker(symbol)
@@ -20,3 +20,11 @@ def get_latest_price(symbol: str) -> float:
     except Exception as e:
         logging.exception(f"Error retrieving latest price for symbol {symbol}: {e}")
         return 0
+
+
+def get_asset_description(symbol: str) -> str:
+    try:
+        return generate_asset_description(symbol)
+    except Exception as e:
+        logging.exception(f"Error retrieving description for symbol {symbol}: {e}")
+        return ""

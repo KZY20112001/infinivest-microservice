@@ -21,3 +21,6 @@ class Asset(BaseModel):
         
 class AssetAllocationResponse(BaseModel):
     assets: List[Asset]
+    
+class AssetDescriptionResponse(BaseModel):
+    description: str
