@@ -1,24 +1,26 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List,Optional
 
 class Portfolio(BaseModel):
-    large_cap_blend: float
-    small_cap_blend: float
-    international_stocks: float
-    emerging_markets: float
-    intermediate_bonds: float
-    international_bonds: float
+    largeCapBlend: float
+    smallCapBlend: float
+    internationalStocks: float
+    emergingMarkets: float
+    intermediateBonds: float
+    internationalBonds: float
     cash: float
-    commodities: float
-    reits: float
 
 class PortfolioResponse(BaseModel):
     portfolio: Portfolio
     reason: str
 
 class Asset(BaseModel):
+    name: Optional[str] = None    
     symbol: str
     percentage: float
-
+        
 class AssetAllocationResponse(BaseModel):
     assets: List[Asset]
+    
+class AssetDescriptionResponse(BaseModel):
+    description: str
