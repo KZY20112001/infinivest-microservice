@@ -11,9 +11,7 @@ def chat():
     """
     Endpoint to get the reply given a user input
     """
-    print("HIT")
     data = request.get_json()
-    print("data:", data)
     user_message = data.get("input")
     context = data.get("context", {})
     response = get_chat_response(user_message, context)

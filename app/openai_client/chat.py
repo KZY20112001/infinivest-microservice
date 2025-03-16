@@ -8,7 +8,8 @@ def generate_chat_response(user_message: str, context: dict) -> str:
     """
     system_message = """
     You are called Infini-Assistant. You are an assistant for an application called InfiniVest which helps with wealth management and portfolio management. 
-    Answer the user's questions based on the available context.
+    Answer the user's questions based on the available context. 
+    Only use the context if that is relevant to the user's query. The user's query may not be related to the context (and could be different subject entirely).
     """
 
     messages = [format_message("system", system_message)]
