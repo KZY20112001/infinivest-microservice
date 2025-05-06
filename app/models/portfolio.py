@@ -21,6 +21,7 @@ class Asset(BaseModel):
         
 class AssetAllocationResponse(BaseModel):
     assets: List[Asset]
+    reason: str
     
 class AssetDescriptionResponse(BaseModel):
     description: str
