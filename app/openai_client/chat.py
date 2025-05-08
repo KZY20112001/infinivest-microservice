@@ -1,5 +1,4 @@
 from .openai import get_response, format_message
-from typing import Optional
 
 
 def generate_chat_response(user_message: str, context: dict) -> str:

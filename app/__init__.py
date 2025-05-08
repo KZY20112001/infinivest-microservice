@@ -1,12 +1,13 @@
 from flask import Flask
-from .routes import robo_advisor_bp, assets_bp, chat_bp
+from .routes import robo_advisor_bp, assets_bp, chat_bp, insights_bp
 from .config import Config
 
 
 blueprints = [
     (robo_advisor_bp, '/robo-advisor'),
     (assets_bp, '/assets'),
-    (chat_bp, '/chat')
+    (chat_bp, '/chat'), 
+    (insights_bp, '/insights')
 ]
     
 def create_app():
