@@ -1,7 +1,7 @@
-from flask import Blueprint,  jsonify
+from flask import Blueprint,  jsonify, request
 
 from app.services import get_latest_price, get_asset_description, get_price_history, get_assets
-
+from app.openai_client import generate_assets_recommendations
 assets_bp = Blueprint('assets', __name__)
 
 @assets_bp.route('/latest-price/<symbol>', methods=['GET'])
@@ -57,3 +57,12 @@ def get_assets_by_keyword(key_word:str = None):
 
     assets = get_assets(key_word)
     return jsonify(assets), 200
+
+
+@assets_bp.route("/suggestions", methods=["POST"])
+def get_assets_suggestions():
+    data = request.get_json()
+    profile = data.get("profile", {})
+    print(profile)
+    recommendations = generate_assets_recommendations(profile)
+    return jsonify(recommendations), 200

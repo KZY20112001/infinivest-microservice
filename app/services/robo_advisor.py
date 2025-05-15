@@ -34,7 +34,7 @@ def generate_asset_allocation(category:str, percentage:str) -> AssetAllocationRe
     Takes in a category and a percentage and returns the asset split for the category. 
     """
     print("Generating asset allocation for category: ", category)
-    MAX_RETRIES = 10
+    MAX_RETRIES = 5
     assets = generate_asset_allocation_split(category, percentage, [])
     retry_count = 0
     invalid_stocks = get_invalid_stocks(assets)
@@ -133,4 +133,4 @@ def add_names_to_assets(response: AssetAllocationResponse) -> AssetAllocationRes
         )
         updated_assets.append(updated_asset)
 
-    return AssetAllocationResponse(assets=updated_assets)
+    return AssetAllocationResponse(assets=updated_assets, reason=response.reason)

@@ -104,23 +104,31 @@ def generate_asset_allocation_split(category: str, total_percentage: str, invali
 
     Return the recommended assets (their symbols) and their percentages in the JSON format as shown in this example:
     Ensure that the symbols are valid symbols, and the total percentages for the generated assets sum up to the total percentage provided.
+    Also include the reason why these asssets are chosen in one paragraph.
     e.g.
-    {{ 
-        "SPY": 12,
-        "VTI": 6,
-        "GOOG": 3,
-        "AAPL": 2,
-        "MSFT": 2
+    {{
+        "assets" : {{ 
+            "SPY": 12,
+            "VTI": 6,
+            "GOOG": 3,
+            "AAPL": 2,
+            "MSFT": 2
+        }}, 
+        "reason": "These This portfolio is recommended because it balances broad market exposure with high-growth tech stocks. 
+                    SPY and VTI provide diversified, stable exposure to the U.S. stock market, 
+                    while GOOG, AAPL, and MSFT offer strong growth potential from leading technology companies. 
+                    Together, they create a mix of stability and long-term performance."
     }}
     """
     input_message = category + " " + total_percentage
     messages = [format_message("system", class_inst),
                     format_message("user", input_message)]
-    res = get_response(messages)
 
-    assets_list = [Asset(symbol=k, percentage=v) for k, v in json.loads(res).items()]
-    asset_allocation = AssetAllocationResponse(assets=assets_list)
-    return asset_allocation
+    res = get_response(messages)
+    res_dict:dict = json.loads(res)
+    
+    assets_list = [Asset(symbol=symbol, percentage=percentage) for symbol, percentage in res_dict["assets"].items()]
+    return AssetAllocationResponse(assets=assets_list, reason=res_dict["reason"])
 
 
 def generate_asset_description(symbol: str)->str: 
